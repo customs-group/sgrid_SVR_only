@@ -2,6 +2,7 @@ package core;
 
 import libsvm.*;
 
+import java.io.IOException;
 import java.util.Vector;
 
 /**
@@ -22,7 +23,7 @@ public class SVMLib {
      * @param param the svm parameter to train the data
      * @return a trained model, can be used to validate training data
      */
-    public static svm_model train(Data data, svm_parameter param) {
+    public static svm_model train(Data data, svm_parameter param, boolean debug) {
         long startTime = System.currentTimeMillis();
         /* set svm problem */
         svm_problem problem = new svm_problem();
@@ -38,12 +39,14 @@ public class SVMLib {
         String errorMsg = svm.svm_check_parameter(problem, param);
         if (errorMsg == null) {
             svm_model model = svm.svm_train(problem, param);
-            // you can save the model for debugging
-//            try {
-//                svm.svm_save_model("./results/svr/model.txt", model);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            if (debug) {
+                try {
+                    String modelPath = LibConfig.properties.getProperty("modelPath");
+                    svm.svm_save_model(modelPath, model);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             System.out.println("Train finished in " + (System.currentTimeMillis() - startTime) / 1000.0 + " seconds");
             return model;
         } else {
@@ -85,7 +88,7 @@ public class SVMLib {
             }
 
             Data trainData = new Data(trainSet, trainLabels);
-            svm_model model = train(trainData, param);
+            svm_model model = train(trainData, param, false);
             if (model != null) {
                 double diff = 0.0d;
                 for (int j = 0; j < validSet.size(); j++) {

@@ -39,8 +39,7 @@ public class RegressionDemo {
         // caution: cost a lot of time
 //        param = SVMLib.updateParam(param, trainData);
 
-        svm_model model = SVMLib.train(trainData, param);
-        regressionResult(model, trainData);
+        svm_model model = SVMLib.train(trainData, param, false);
         regressionResult(model, testData);
     }
 
@@ -87,7 +86,7 @@ public class RegressionDemo {
         // caution: cost a lot of time
 //        param = SVMLib.updateParam(param, trainData);
 
-        svm_model model = SVMLib.train(trainData, param);
+        svm_model model = SVMLib.train(trainData, param, false);
         regressionResult(model, testData);
     }
 
