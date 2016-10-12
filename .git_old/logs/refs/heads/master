@@ -1,0 +1,8 @@
+0000000000000000000000000000000000000000 fabfaa17f6185278fa4d1e2561333e2ad42d2a89 edwardlol <jameszhou2108@hotmail.com> 1473851281 +0800	commit (initial): first commit
+fabfaa17f6185278fa4d1e2561333e2ad42d2a89 60a80f6877f1fad86d157227f8ee58f6ea014d2b edwardlol <jameszhou2108@hotmail.com> 1473851542 +0800	pull origin master: Merge made by the 'recursive' strategy.
+60a80f6877f1fad86d157227f8ee58f6ea014d2b f2e865948b73e2bb7892130b155811ac468b1e08 edwardlol <jameszhou2108@hotmail.com> 1473851794 +0800	commit: .gitignore is now working
+f2e865948b73e2bb7892130b155811ac468b1e08 65c25f737e5d41104d521eb5fef84ed1dc93b518 edwardlol <jameszhou2108@hotmail.com> 1473851910 +0800	commit: change directory name from library to dicts
+65c25f737e5d41104d521eb5fef84ed1dc93b518 c5ff2be9b7df939cd9009b7ae40f51133ff5ae12 edwardlol <jameszhou2108@hotmail.com> 1473856616 +0800	commit: simplified the process of computing key words for every Document, and reformatted some code
+c5ff2be9b7df939cd9009b7ae40f51133ff5ae12 e72fc3e3407bf7377db5f90a4b74cf2adb0a7c5a edwardlol <jameszhou2108@hotmail.com> 1473911073 +0800	commit: removed abstract lib
+e72fc3e3407bf7377db5f90a4b74cf2adb0a7c5a b6af656401684c6f39bcf47a68e0e5f728d36c4a edwardlol <jameszhou2108@hotmail.com> 1473945816 +0800	commit: Columns.java added but not finished.
+b6af656401684c6f39bcf47a68e0e5f728d36c4a cc3a074f193ccd4947b63d65e9585101d2bfe39f edwardlol <jameszhou2108@hotmail.com> 1476271899 +0800	commit: in progressing
