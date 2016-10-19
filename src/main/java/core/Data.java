@@ -262,6 +262,7 @@ public class Data {
      * make the labels 1 or -1
      * for classification
      */
+    @SuppressWarnings("unused")
     public void normalizeLabel() {
         this.labels.forEach(label -> label = label <= 0 ? -1.0d : 1.0d);
     }
@@ -276,11 +277,15 @@ public class Data {
                 if (this.scaledSamples != null) {
                     return this.scaledSamples;
                 } else {
-//                    System.out.println("dataset not scaled yet, original data set returned");
+                    if (SVMLib.DEBUG) {
+                        System.out.println("dataset not scaled yet, original data set returned");
+                    }
                     return this.originalSamples;
                 }
             default:
-//                System.out.println("wrong data type, original data set returned");
+                if (SVMLib.DEBUG) {
+                    System.out.println("wrong data type, original data set returned");
+                }
                 return this.originalSamples;
         }
     }

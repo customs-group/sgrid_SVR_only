@@ -10,6 +10,7 @@ import java.util.Vector;
  * Created by edwardlol on 16/8/15.
  */
 public class SVMLib {
+    public static boolean DEBUG = false;
     //~ Constructors -----------------------------------------------------------
 
     // Suppress default constructor for noninstantiability
@@ -53,6 +54,23 @@ public class SVMLib {
             System.out.println(errorMsg);
             return null;
         }
+    }
+
+    /**
+     *
+     * @param sample
+     * @param model
+     * @return
+     */
+    @SuppressWarnings("unused")
+    public static double predict(double[] sample, svm_model model) {
+        svm_node[] svm_sample = new svm_node[sample.length];
+        for (int i = 0; i < sample.length; i++) {
+            svm_node sample_feature = new svm_node();
+            sample_feature.index = i + 1;
+            sample_feature.value = sample[i];
+        }
+        return svm.svm_predict(model, svm_sample);
     }
 
     /**
@@ -109,6 +127,7 @@ public class SVMLib {
      * @param data the dataset to do grid search
      * @return the optimized svm_parameter
      */
+    @SuppressWarnings("unused")
     public static svm_parameter updateParam(svm_parameter param, Data data) {
         // suppress training outputs
         svm_print_interface print_func = LibConfig.svm_print_null;
