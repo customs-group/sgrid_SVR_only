@@ -23,7 +23,7 @@ public class SVMLib {
 
     Data trainingData;
     Data testData;
-    public svm_parameter svm_param = this.config.getDefaultParam();
+    public svm_parameter svm_param;
 
     //~ Constructors -----------------------------------------------------------
 
@@ -199,6 +199,12 @@ public class SVMLib {
         param.gamma = bestG;
         System.out.println("best C: " + param.C + "; best gamma: " + param.gamma + "; best diff: " + smallestDiff);
         return param;
+    }
+
+    public SVMLib setType(LibConfig.Type type) {
+        this.config.type = type;
+        this.svm_param = this.config.getDefaultParam();
+        return this;
     }
 
 }

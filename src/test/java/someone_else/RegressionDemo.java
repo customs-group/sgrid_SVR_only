@@ -2,6 +2,7 @@ package someone_else;
 
 import com.google.common.collect.Maps;
 import core.Data;
+import core.LibConfig;
 import core.SVMLib;
 import libsvm.svm;
 import libsvm.svm_model;
@@ -30,7 +31,7 @@ public class RegressionDemo {
 
     @Test
     public void regression1() {
-        SVMLib svmLib = SVMLib.getInstance();
+        SVMLib svmLib = SVMLib.getInstance().setType(LibConfig.Type.REGRESSION);
 
         Data trainData = new Data();
         Data testData = new Data();

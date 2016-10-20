@@ -10,10 +10,10 @@ import java.util.Properties;
  *
  * Created by edwardlol on 2016/10/12.
  */
-class LibConfig {
+public class LibConfig {
     //~ Inner enum classes -----------------------------------------------------
 
-    private enum Type { CLASSIFICATION, REGRESSION }
+    public enum Type { CLASSIFICATION, REGRESSION }
 
     //~ Static fields and initializer ------------------------------------------
 
@@ -24,7 +24,9 @@ class LibConfig {
     //~ Instance fields --------------------------------------------------------
 
     final svm_print_interface svm_print_null = (s) -> {};
+
     Properties properties = new Properties();
+
     Type type;
 
     //~ Constructors -----------------------------------------------------------
@@ -56,7 +58,7 @@ class LibConfig {
      * get the only instance of this class
      * @return the only instance of this class
      */
-    public static LibConfig getInstance() {
+    static LibConfig getInstance() {
         if (instance == null) {
             instance = new LibConfig();
         }

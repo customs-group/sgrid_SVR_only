@@ -65,7 +65,7 @@ public class Data {
                 int lenth = contents.length - 1;
                 if (lenth != this.featureNum) {
                     System.err.println("data format not aligned");
-                    throw new Exception("data format error");
+                    throw new RuntimeException("data format error");
                 }
                 // y, x1, x2,...,xn
                 svm_node[] sample = new svm_node[this.featureNum];
@@ -83,7 +83,7 @@ public class Data {
             // end data preparation
             System.out.println("Data preparation done in " + (System.currentTimeMillis() - startTime) / 1000.0 + " seconds");
             System.out.println("Read " + this.getSampleNum() + " samples in total");
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("Data preparation failed!");
             e.printStackTrace();
         }
@@ -98,6 +98,7 @@ public class Data {
      */
     @SuppressWarnings("unused")
 	public Data readDataFromDB(String url, String tableName, String username, String password) {
+        long startTime = System.currentTimeMillis();
         JDBCUtil jdbcUtil = JDBCUtil.getInstance();
         jdbcUtil.dbms = JDBCUtil.DBMS.ORACLE;
         try (Connection con = jdbcUtil.getConnection(url, username, password);
@@ -117,6 +118,8 @@ public class Data {
                 }
                 this.originalSamples.add(sample);
             }
+            System.out.println("Data preparation done in " + (System.currentTimeMillis() - startTime) / 1000.0 + " seconds");
+            System.out.println("Read " + this.getSampleNum() + " samples in total");
         } catch (SQLException se) {
             System.out.println("DBMS connection failed!");
             se.printStackTrace();
@@ -171,8 +174,9 @@ public class Data {
 
     /**
      * automatically scale the data according to the min/max value of each column
-     * @return a scale_param is a double[][] that contains the min/max value of each column
+     * @return a scale_param in double[][] form that contains the min/max value of each column
      */
+    @SuppressWarnings("unused")
     public double[][] scaleTrainingData() {
         this.scaledSamples = new Vector<>();
 		/* step 0: initiate scale param */
@@ -222,6 +226,7 @@ public class Data {
      * scale test data
      * @param scaleParam returned by {@link #scaleTrainingData()}
      */
+    @SuppressWarnings("unused")
     public void scaleTestData(double[][] scaleParam) {
         this.scaledSamples = new Vector<>();
 		/* step 1: initiate feature bound */
