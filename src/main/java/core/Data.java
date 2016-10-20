@@ -16,13 +16,7 @@ import java.util.Vector;
  * Created by edwardlol on 16/7/7.
  */
 public class Data {
-    //~ Inner enum classes -----------------------------------------------------
-
-    private enum Type { CLASSIFICATION, REGRESSION }
-
     //~ Instance fields --------------------------------------------------------
-
-    Type type;
 
     private int sampleNum = 0;
     private int featureNum = 0;
@@ -35,15 +29,15 @@ public class Data {
 
     //~ Constructors -----------------------------------------------------------
 
-    public Data() { }
+    public Data() {}
 
-    public Data(List<svm_node[]> samples) {
-        this.sampleNum = samples.size();
-        this.originalSamples = new Vector<>(samples);
-        this.featureNum = this.originalSamples.get(0).length;
-    }
-
+    /**
+     * for cross validation
+     * @param samples samples
+     * @param labels labels
+     */
     public Data(List<svm_node[]> samples, List<Double> labels) {
+        assert samples.size() == labels.size();
         this.sampleNum = samples.size();
         this.originalSamples = new Vector<>(samples);
         this.labels = new Vector<>(labels);
@@ -55,8 +49,9 @@ public class Data {
     /**
      * init the dataset from a csv file
      * @param file csv file name
+     * @return this
      */
-	public void readDataFromCSVFile(String file) {
+	public Data readDataFromCSVFile(String file) {
         long startTime = System.currentTimeMillis();
         try (FileReader fr = new FileReader(file);
              BufferedReader br = new BufferedReader(fr)) {
@@ -92,6 +87,7 @@ public class Data {
             System.out.println("Data preparation failed!");
             e.printStackTrace();
         }
+        return this;
 	}
 
     /**
@@ -100,7 +96,8 @@ public class Data {
      * @param username username
      * @param password password
      */
-	public void readDataFromDB(String url, String tableName, String username, String password) {
+    @SuppressWarnings("unused")
+	public Data readDataFromDB(String url, String tableName, String username, String password) {
         JDBCUtil jdbcUtil = JDBCUtil.getInstance();
         jdbcUtil.dbms = JDBCUtil.DBMS.ORACLE;
         try (Connection con = jdbcUtil.getConnection(url, username, password);
@@ -121,9 +118,10 @@ public class Data {
                 this.originalSamples.add(sample);
             }
         } catch (SQLException se) {
-            System.out.println("数据库连接失败！");
+            System.out.println("DBMS connection failed!");
             se.printStackTrace();
         }
+        return this;
     }
 
     /**
@@ -132,7 +130,7 @@ public class Data {
      * @param fileName file name to store data
      * @param type type of data to be recorded, original or scaled
      */
-    void recordData(String fileName, String type) {
+    public void recordData(String fileName, String type) {
         long startTime = System.currentTimeMillis();
         String _fileName;
         Vector<svm_node[]> _set;

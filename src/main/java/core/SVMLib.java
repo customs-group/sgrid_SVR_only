@@ -1,5 +1,6 @@
 package core;
 
+import com.google.common.base.Preconditions;
 import libsvm.*;
 
 import java.io.IOException;
@@ -10,13 +11,40 @@ import java.util.Vector;
  * Created by edwardlol on 16/8/15.
  */
 public class SVMLib {
+    //~ Static fields and initializer ------------------------------------------
+
+    private static SVMLib instance = null;
+
     public static boolean DEBUG = false;
+
+    //~ Instance fields --------------------------------------------------------
+
+    public LibConfig config  = LibConfig.getInstance();
+
+    Data trainingData;
+    Data testData;
+    public svm_parameter svm_param = this.config.getDefaultParam();
+
     //~ Constructors -----------------------------------------------------------
 
-    // Suppress default constructor for noninstantiability
     private SVMLib() {}
 
     //~ Methods ----------------------------------------------------------------
+
+    /**
+     * get the only instance of this class
+     * @return the only instance of this class
+     */
+    public static SVMLib getInstance() {
+        if (instance == null) {
+            instance = new SVMLib();
+        }
+        return instance;
+    }
+
+    public void initDataFromFile() {
+        this.trainingData = new Data().readDataFromCSVFile(this.config.properties.getProperty("trainingData"));
+    }
 
     /**
      * train the data sets using the given parameter
@@ -24,7 +52,11 @@ public class SVMLib {
      * @param param the svm parameter to train the data
      * @return a trained model, can be used to validate training data
      */
-    public static svm_model train(Data data, svm_parameter param, boolean debug) {
+    @org.jetbrains.annotations.Nullable
+    public svm_model train(Data data, svm_parameter param) {
+        Preconditions.checkNotNull(data);
+        Preconditions.checkNotNull(param);
+
         long startTime = System.currentTimeMillis();
         /* set svm problem */
         svm_problem problem = new svm_problem();
@@ -40,15 +72,16 @@ public class SVMLib {
         String errorMsg = svm.svm_check_parameter(problem, param);
         if (errorMsg == null) {
             svm_model model = svm.svm_train(problem, param);
-            if (debug) {
+            if (DEBUG) {
                 try {
-                    String modelPath = LibConfig.properties.getProperty("modelPath");
-                    svm.svm_save_model(modelPath, model);
+                    String modelFile = this.config.properties.getProperty("modelFile");
+                    svm.svm_save_model(modelFile, model);
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    System.out.println("Train finished in " + (System.currentTimeMillis() - startTime) / 1000.0 + " seconds");
                 }
             }
-            System.out.println("Train finished in " + (System.currentTimeMillis() - startTime) / 1000.0 + " seconds");
             return model;
         } else {
             System.out.println(errorMsg);
@@ -63,7 +96,7 @@ public class SVMLib {
      * @return
      */
     @SuppressWarnings("unused")
-    public static double predict(double[] sample, svm_model model) {
+    public double predict(double[] sample, svm_model model) {
         svm_node[] svm_sample = new svm_node[sample.length];
         for (int i = 0; i < sample.length; i++) {
             svm_node sample_feature = new svm_node();
@@ -80,7 +113,7 @@ public class SVMLib {
      * @param fold_n the number of folds
      * @return the 'loss' of the prediction
      */
-    private static double crossValidation(Data data, svm_parameter param, int fold_n) {
+    private double crossValidation(Data data, svm_parameter param, int fold_n) {
         double totalDiff = 0.0d;
         for (int i = 0; i < fold_n; i++) {
             Vector<svm_node[]> trainSet = new Vector<>();
@@ -106,7 +139,7 @@ public class SVMLib {
             }
 
             Data trainData = new Data(trainSet, trainLabels);
-            svm_model model = train(trainData, param, false);
+            svm_model model = train(trainData, param);
             if (model != null) {
                 double diff = 0.0d;
                 for (int j = 0; j < validSet.size(); j++) {
@@ -128,9 +161,9 @@ public class SVMLib {
      * @return the optimized svm_parameter
      */
     @SuppressWarnings("unused")
-    public static svm_parameter updateParam(svm_parameter param, Data data) {
+    public svm_parameter updateParam(svm_parameter param, Data data) {
         // suppress training outputs
-        svm_print_interface print_func = LibConfig.svm_print_null;
+        svm_print_interface print_func = this.config.svm_print_null;
         svm.svm_set_print_string_function(print_func);
 
         double bestC = 1.0d;

@@ -1,13 +1,20 @@
-package core;
+package someone_else;
 
 import com.google.common.collect.Maps;
-import libsvm.*;
+import core.Data;
+import core.SVMLib;
+import libsvm.svm;
+import libsvm.svm_model;
+import libsvm.svm_node;
+import libsvm.svm_parameter;
 import org.junit.Test;
 
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  *
@@ -23,6 +30,8 @@ public class RegressionDemo {
 
     @Test
     public void regression1() {
+        SVMLib svmLib = SVMLib.getInstance();
+
         Data trainData = new Data();
         Data testData = new Data();
         /* read data */
@@ -32,14 +41,14 @@ public class RegressionDemo {
         trainData.recordData("./results/svr/train", "original");
         testData.recordData("./results/svr/test", "original");
 
-        svm_parameter param = LibConfig.getDefaultParam("svr");
+        svm_parameter param = svmLib.svm_param;
         param.gamma = 1.0 / trainData.getSampleNum();
 
         // uncomment this line to do cross validation and utilize the svm_param
         // caution: cost a lot of time
 //        param = SVMLib.updateParam(param, trainData);
 
-        svm_model model = SVMLib.train(trainData, param, false);
+        svm_model model = svmLib.train(trainData, param);
         regressionResult(model, testData);
     }
 
@@ -48,6 +57,8 @@ public class RegressionDemo {
      */
     @Test
     public void regression2() {
+        SVMLib svmLib = SVMLib.getInstance();
+
         Map<LocalDate, String> defcnt = readPart1("./datasets/svr/defcnt.csv");
         Map<LocalDate, Integer[]> weather = readPart2("./datasets/svr/weather.csv");
 
@@ -79,14 +90,14 @@ public class RegressionDemo {
         Vector<Double> testLabels = new Vector<>(labels.subList(trainingIndex, samples.size()));
         Data testData = new Data(testSamples, testLabels);
 
-        svm_parameter param = LibConfig.getDefaultParam("svr");
+        svm_parameter param = svmLib.svm_param;
         param.gamma = 1.0 / trainData.getSampleNum();
 
         // uncomment this line to do cross validation and utilize the svm_param
         // caution: cost a lot of time
 //        param = SVMLib.updateParam(param, trainData);
 
-        svm_model model = SVMLib.train(trainData, param, false);
+        svm_model model = svmLib.train(trainData, param);
         regressionResult(model, testData);
     }
 
@@ -158,7 +169,7 @@ public class RegressionDemo {
      * @param data
      * @return
      */
-    public static double regressionResult(svm_model model, Data data) {
+    private static double regressionResult(svm_model model, Data data) {
         long startTime = System.currentTimeMillis();
         double diff = 0;
         int totalCnt = 0, goodCnt = 0;

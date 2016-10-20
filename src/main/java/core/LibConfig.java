@@ -11,21 +11,33 @@ import java.util.Properties;
  * Created by edwardlol on 2016/10/12.
  */
 class LibConfig {
+    //~ Inner enum classes -----------------------------------------------------
+
+    private enum Type { CLASSIFICATION, REGRESSION }
+
     //~ Static fields and initializer ------------------------------------------
 
-    static final svm_print_interface svm_print_null = (s) -> {};
+    private static LibConfig instance = null;
 
     private static String propertyFile = "libConfig.properties";
 
-    static Properties properties = new Properties();
-    static {
+    //~ Instance fields --------------------------------------------------------
+
+    final svm_print_interface svm_print_null = (s) -> {};
+    Properties properties = new Properties();
+    Type type;
+
+    //~ Constructors -----------------------------------------------------------
+
+    private LibConfig() {
         try (FileInputStream propertiesFile = new FileInputStream(propertyFile)) {
-            properties.load(propertiesFile);
+            this.properties.load(propertiesFile);
         } catch (FileNotFoundException fnfe) {
             File file = new File(propertyFile);
             try {
                 if (file.createNewFile()) {
                     System.out.println("File is created!");
+                    initDefaultConfig();
                 } else {
                     System.out.println("File already exists.");
                 }
@@ -33,24 +45,44 @@ class LibConfig {
                 e.printStackTrace();
             }
         } catch (IOException e) {
+            System.out.println("config initialization failed!");
             e.printStackTrace();
         }
     }
 
-    //~ Constructors -----------------------------------------------------------
+    //~ Methods ----------------------------------------------------------------
 
-    // Suppress default constructor for noninstantiability
-    private LibConfig() {}
+    /**
+     * get the only instance of this class
+     * @return the only instance of this class
+     */
+    public static LibConfig getInstance() {
+        if (instance == null) {
+            instance = new LibConfig();
+        }
+        return instance;
+    }
 
-    //~ Static methods ---------------------------------------------------------
+    /**
+     * init the default config properties
+     */
+    private void initDefaultConfig() {
+        setProperty("modelFile", "./results/model");
+        setProperty("trainData", "./datasets/train.csv");
+        setProperty("testData", "./datasets/test.csv");
+    }
 
-    static svm_parameter getDefaultParam(String svmType) {
+    /**
+     * get the default param according to the type
+     * @return the default param
+     */
+    svm_parameter getDefaultParam() {
         svm_parameter param = new svm_parameter();
-        switch (svmType.toLowerCase()) {
-            case "svr":
+        switch (this.type) {
+            case REGRESSION:
                 param.svm_type = svm_parameter.EPSILON_SVR;
                 break;
-            case "svm":
+            case CLASSIFICATION:
             default:
                 param.svm_type = svm_parameter.C_SVC;
         }
@@ -62,15 +94,20 @@ class LibConfig {
         return param;
     }
 
-    @SuppressWarnings("unused")
-    static void addProperty(String key, String value) {
+    /**
+     * set a property to the property file
+     * @param key property key
+     * @param value property value
+     */
+    void setProperty(String key, String value) {
         try (OutputStream output = new FileOutputStream(propertyFile)) {
-            properties.setProperty(key, value);
-            properties.store(output, null);
+            this.properties.setProperty(key, value);
+            this.properties.store(output, null);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }
 
 // End LibConfig.java
