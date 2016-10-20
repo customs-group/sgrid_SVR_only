@@ -13,10 +13,7 @@ import java.util.Properties;
 class LibConfig {
     //~ Static fields and initializer ------------------------------------------
 
-    // TODO: 2016/10/10 solve this shit
-    static final svm_print_interface svm_print_null = new svm_print_interface() {
-        public void print(String s) {}
-    };
+    static final svm_print_interface svm_print_null = (s) -> {};
 
     private static String propertyFile = "libConfig.properties";
 
@@ -65,6 +62,7 @@ class LibConfig {
         return param;
     }
 
+    @SuppressWarnings("unused")
     static void addProperty(String key, String value) {
         try (OutputStream output = new FileOutputStream(propertyFile)) {
             properties.setProperty(key, value);
