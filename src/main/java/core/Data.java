@@ -15,7 +15,7 @@ import java.util.Vector;
  *
  * Created by edwardlol on 16/7/7.
  */
-public class Data {
+class Data {
     //~ Instance fields --------------------------------------------------------
 
     private int sampleNum = 0;
@@ -29,14 +29,14 @@ public class Data {
 
     //~ Constructors -----------------------------------------------------------
 
-    public Data() {}
+    Data() {}
 
     /**
      * for cross validation
      * @param samples samples
      * @param labels labels
      */
-    public Data(List<svm_node[]> samples, List<Double> labels) {
+    Data(List<svm_node[]> samples, List<Double> labels) {
         assert samples.size() == labels.size();
         this.sampleNum = samples.size();
         this.originalSamples = new Vector<>(samples);
@@ -133,6 +133,7 @@ public class Data {
      * @param fileName file name to store data
      * @param type type of data to be recorded, original or scaled
      */
+    @SuppressWarnings("unused")
     public void recordData(String fileName, String type) {
         long startTime = System.currentTimeMillis();
         String _fileName;
