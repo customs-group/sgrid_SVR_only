@@ -127,7 +127,7 @@ public class RegressionDemo {
      * and output to train data and test data
      */
     @Test
-    public void conbine() {
+    public void combine() {
         Map<LocalDate, String> defcnt = readPart1("./datasets/defcnt.csv");
         Map<LocalDate, Integer[]> weather = readPart2("./datasets/weather.csv");
 
