@@ -36,7 +36,6 @@ public class RegressionDemo {
         regressionResult(model, "./datasets/test.csv", "./results/result.txt");
     }
 
-
     /**
      * regression of weather data and defect count
      */
@@ -198,6 +197,48 @@ public class RegressionDemo {
 
     }
 
+
+    @Test
+    public void convert() {
+        convertNeg("./datasets/train.csv", "./datasets/demo1.train.csv");
+        convertNeg("./datasets/test.csv", "./datasets/demo1.test.csv");
+    }
+
+    private void convertNeg(String inputFile, String outputFile) {
+        try (FileReader fileReader = new FileReader(inputFile);
+             BufferedReader bufferedReader = new BufferedReader(fileReader);
+             FileWriter fileWriter = new FileWriter(outputFile);
+             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                String[] contents = line.split(",");
+                String[] newContents = new String[contents.length];
+                System.arraycopy(contents, 0, newContents, 0, contents.length);
+                newContents[2] = String.valueOf(Math.abs(Double.parseDouble(contents[2])));
+                for (int i = 0; i < newContents.length; i++) {
+                    bufferedWriter.append(newContents[i]);
+                    if (i < newContents.length - 1) {
+                        bufferedWriter.append(",");
+                    }
+                }
+                bufferedWriter.append("\n");
+                bufferedWriter.flush();
+                line = bufferedReader.readLine();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     *
+     * @param model
+     * @param testFile
+     * @param resultFile
+     * @return
+     */
     private double regressionResult(svm_model model, String testFile, String resultFile) {
         long startTime = System.currentTimeMillis();
         double diff = 0.0d;
