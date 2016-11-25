@@ -23,17 +23,19 @@ public class RegressionDemo {
             = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.CHINA);
 
     //~ Test methods -----------------------------------------------------------
+    private static final String prefixPathData = "/Users/LU/workspace/sgrid_SVR_only/datasets/";
+    private static final String prefixPathResult = "/Users/LU/workspace/sgrid_SVR_only/results/";
 
     @Test
     public void regression1() {
-        SVMLib svmLib = SVMLib.getInstance().setType(LibConfig.Type.REGRESSION).initDataFromFile("./datasets/train.csv");
+        SVMLib svmLib = SVMLib.getInstance().setType(LibConfig.Type.REGRESSION).initDataFromFile(prefixPathData + "svr/train.csv");
 
         // uncomment this line to do cross validation and utilize the svm_param
         // caution: cost a lot of time
 //        svmLib.svm_param = svmLib.updateParam();
 
         svm_model model = svmLib.train();
-        regressionResult(model, "./datasets/test.csv", "./results/result.txt");
+        regressionResult(model, prefixPathData+"svr/test.csv", prefixPathResult+"svr/result.txt");
     }
 
     /**
@@ -41,10 +43,10 @@ public class RegressionDemo {
      */
     @Test
     public void regression2() {
-        SVMLib svmLib = SVMLib.getInstance().setType(LibConfig.Type.REGRESSION).initDataFromFile("./datasets/demo2.train.csv");
+        SVMLib svmLib = SVMLib.getInstance().setType(LibConfig.Type.REGRESSION).initDataFromFile(prefixPathData+"demo2.train.csv");
 
         svm_model model = svmLib.train();
-        regressionResult(model, "./datasets/demo2.test.csv", "./results/result2.txt");
+        regressionResult(model, prefixPathData+"demo2.test.csv", prefixPathResult+"result2.txt");
     }
 
     //~ Helper methods ---------------------------------------------------------
@@ -128,8 +130,8 @@ public class RegressionDemo {
      */
     @Test
     public void combine() {
-        Map<LocalDate, String> defcnt = readPart1("./datasets/defcnt.csv");
-        Map<LocalDate, Integer[]> weather = readPart2("./datasets/weather.csv");
+        Map<LocalDate, String> defcnt = readPart1(prefixPathData+"svr/defcnt.csv");
+        Map<LocalDate, Integer[]> weather = readPart2(prefixPathData+"svr/weather.csv");
 
         Vector<svm_node[]> samples = new Vector<>();
         Vector<Double> labels = new Vector<>();
@@ -154,7 +156,7 @@ public class RegressionDemo {
 
         Vector<svm_node[]> trainSamples = new Vector<>(samples.subList(0, trainingIndex));
         Vector<Double> trainLabels = new Vector<>(labels.subList(0, trainingIndex));
-        try (FileWriter fw = new FileWriter("./datasets/demo2.train.csv");
+        try (FileWriter fw = new FileWriter(prefixPathData+"demo2.train.csv");
              BufferedWriter bw = new BufferedWriter(fw)){
             for (int i = 0; i < trainSamples.size(); i++) {
                 bw.append(trainLabels.get(i).toString());
@@ -175,7 +177,7 @@ public class RegressionDemo {
 
         Vector<svm_node[]> testSamples = new Vector<>(samples.subList(trainingIndex, samples.size()));
         Vector<Double> testLabels = new Vector<>(labels.subList(trainingIndex, samples.size()));
-        try (FileWriter fw = new FileWriter("./datasets/demo2.test.csv");
+        try (FileWriter fw = new FileWriter(prefixPathData+"demo2.test.csv");
              BufferedWriter bw = new BufferedWriter(fw)) {
             for (int i = 0; i < testSamples.size(); i++) {
                 bw.append(testLabels.get(i).toString());
@@ -200,8 +202,8 @@ public class RegressionDemo {
 
     @Test
     public void convert() {
-        convertNeg("./datasets/train.csv", "./datasets/demo1.train.csv");
-        convertNeg("./datasets/test.csv", "./datasets/demo1.test.csv");
+        convertNeg(prefixPathData+"svr/train.csv", prefixPathData+"demo1.train.csv");
+        convertNeg(prefixPathData+"svr/test.csv", prefixPathData+"demo1.test.csv");
     }
 
     private void convertNeg(String inputFile, String outputFile) {
